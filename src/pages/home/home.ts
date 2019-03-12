@@ -5,6 +5,8 @@ import { NavController, Platform } from 'ionic-angular';
 import { Geolocation } from '@ionic-native/geolocation';
 import { Device } from '@ionic-native/device';
 
+import * as firebase from 'Firebase';
+
 declare var google: any;
 
 @Component({
@@ -17,6 +19,7 @@ export class HomePage {
   map: any;
 
   markers = [];
+  ref = firebase.database().ref('geolocations/');
   
   constructor(
     public navCtrl: NavController,
@@ -26,6 +29,24 @@ export class HomePage {
 
       platform.ready().then(() => {
         this.initMap();
+      });
+
+      this.ref.on('value', resp => {
+        this.deleteMarkers();
+        snapshotToArray(resp).forEach(data => {
+          if(data.uuid !== this.device.uuid) {
+            let updatelocation = new google.maps.LatLng(data.latitude,data.longitude);
+            let imagen = 'assets/logo2.png';
+            this.addMarker(updatelocation, imagen);
+            this.setMapOnAll(this.map);
+          } else {
+           
+            let updatelocation = new google.maps.LatLng(data.latitude,data.longitude);
+            let imagen = 'assets/imgs/logo.png';
+            this.addMarker(updatelocation, imagen);
+            this.setMapOnAll(this.map);
+          }
+        });
       });
 
   }
@@ -41,25 +62,25 @@ export class HomePage {
     let watch = this.geolocation.watchPosition();
     watch.subscribe((data) => {
       this.deleteMarkers();
+      this.updateGeolocation(this.device.uuid, data.coords.latitude,data.coords.longitude);
       let miPosicionActual = new google.maps.LatLng(data.coords.latitude,data.coords.longitude);
-      this.addMarker(miPosicionActual);
+      let imagen = 'assets/imgs/logo.png';
+      this.addMarker(miPosicionActual, imagen);
       this.setMapOnAll(this.map);
     });
   }
 
-  addMarker(location) {
+  addMarker(location, urlImage) {
     let marker = new google.maps.Marker({
       position: location,
       map: this.map,
       icon: {
-        url: 'assets/logo.png',
+        url: urlImage,
         size: new google.maps.Size(126, 75),
         origin: new google.maps.Point(0, 0),
         anchor: new google.maps.Point(17, 8),
         scaledSize: new google.maps.Size(32, 19)
       },
-      //title: 'Identificador',
-			//animation: 'DROP',
     });
     this.markers.push(marker);
   }
@@ -79,4 +100,36 @@ export class HomePage {
     this.markers = [];
   }
 
+  updateGeolocation(uuid, lat, lng) {
+    if(localStorage.getItem('miLlave')) {
+      firebase.database().ref('geolocations/'+localStorage.getItem('miLlave')).set({
+        uuid: uuid,
+        latitude: lat,
+        longitude : lng
+      });
+    } else {
+      let newData = this.ref.push();
+      newData.set({
+        uuid: uuid,
+        latitude: lat,
+        longitude: lng
+      });
+      localStorage.setItem('miLlave', newData.key);
+    }
+  }
+
 }
+
+export const snapshotToArray = snapshot => {
+  let returnArr = [];
+
+  snapshot.forEach(childSnapshot => {
+      let item = childSnapshot.val();
+      item.key = childSnapshot.key;
+      returnArr.push(item);
+  });
+
+  return returnArr;
+};
+
+
