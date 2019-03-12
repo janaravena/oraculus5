@@ -3,6 +3,7 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 import { NavController, Platform } from 'ionic-angular';
 
 import { Geolocation } from '@ionic-native/geolocation';
+import { Device } from '@ionic-native/device';
 
 declare var google: any;
 
@@ -20,7 +21,8 @@ export class HomePage {
   constructor(
     public navCtrl: NavController,
     public platform: Platform,
-    private geolocation: Geolocation) {
+    private geolocation: Geolocation,
+    private device: Device) {
 
       platform.ready().then(() => {
         this.initMap();

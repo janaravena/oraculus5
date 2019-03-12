@@ -17,3 +17,9 @@ $ npm install --save firebase
 ### 3)Agregar Google Maps Javascript.
 ### 4)Agregar Geolocalización en tiempo real (con alguno de los 2 plugins)
 ### 5)Agregar marcadores
+
+### 6)Agregar seguimiento desde firebase.
+```
+$ ionic cordova plugin add cordova-plugin-device
+$ npm install --save @ionic-native/device@4
+```
