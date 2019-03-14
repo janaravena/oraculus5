@@ -42,7 +42,7 @@ export class HomePage {
           } else {
            
             let updatelocation = new google.maps.LatLng(data.latitude,data.longitude);
-            let imagen = 'assets/imgs/logo.png';
+            let imagen = 'assets/logo.png';
             this.addMarker(updatelocation, imagen);
             this.setMapOnAll(this.map);
           }
@@ -64,7 +64,7 @@ export class HomePage {
       this.deleteMarkers();
       this.updateGeolocation(this.device.uuid, data.coords.latitude,data.coords.longitude);
       let miPosicionActual = new google.maps.LatLng(data.coords.latitude,data.coords.longitude);
-      let imagen = 'assets/imgs/logo.png';
+      let imagen = 'assets/logo.png';
       this.addMarker(miPosicionActual, imagen);
       this.setMapOnAll(this.map);
     });
