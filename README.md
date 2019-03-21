@@ -23,3 +23,10 @@ $ npm install --save firebase
 $ ionic cordova plugin add cordova-plugin-device
 $ npm install --save @ionic-native/device@4
 ```
+
+# Si da error
+Probar con:
+
+```
+$ npm install --save @types/googlemaps
+```
